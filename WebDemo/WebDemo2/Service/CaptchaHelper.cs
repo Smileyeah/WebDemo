@@ -16,7 +16,7 @@ namespace WebDemo2.Service
         private const int _shearSize = 40;
         //原始图片所在路径 300*200
         //原始图片数量
-        private const int _imgNum = 30;
+        private const int _imgNum = 8;
         //原始图片宽px
         private readonly int _imgWidth = 300;
         //原始图片高px
@@ -47,7 +47,7 @@ namespace WebDemo2.Service
         /// 获取验证码
         /// </summary>
         /// <returns></returns>
-        public string GetVerificationCode(string path)
+        public object GetVerificationCode(string path)
         {
             //小图相对原图左上角的y坐标  y坐标返回到前端
             int _positionY;
@@ -61,7 +61,7 @@ namespace WebDemo2.Service
 
             int[] array = numbers.OrderBy(x => Guid.NewGuid()).ToArray();
 
-            path = Path.Combine(path, $"{(new Random()).Next(1, _imgNum)}.jpg");
+            path = Path.Combine(path, $"{new Random().Next(1, _imgNum)}.jpg");
 
             Bitmap bmp = new Bitmap(path);
 
@@ -71,16 +71,6 @@ namespace WebDemo2.Service
 
             string ls_confusion = "data:image/jpg;base64," + ImgToBase64String(ConfusionImage(array, lb_normal));
 
-            JObject jObject = new JObject
-            {
-                ["errcode"] = 0,
-                ["y"] = _positionY,
-                ["array"] = string.Join(",", array),
-                ["imgx"] = _imgWidth,
-                ["imgy"] = _imgHeight,
-                ["small"] = ls_small,
-                ["normal"] = ls_confusion
-            };
             /* errcode: 状态值 成功为0
              * y:裁剪图片y轴位置
              * small：小图字符串
@@ -89,7 +79,16 @@ namespace WebDemo2.Service
              * imgx：原图宽
              * imgy：原图高
              */
-            return jObject.ToString();
+            return new
+            {
+                errcode = 0,
+                y = _positionY,
+                array = string.Join(",", array),
+                imgx = _imgWidth,
+                imgy = _imgHeight,
+                small = ls_small,
+                normal = ls_confusion
+            };
         }
 
 

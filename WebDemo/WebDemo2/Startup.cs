@@ -40,6 +40,8 @@ namespace WebDemo2
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMemoryCache();
+
             services.AddControllers();
 
             services.AddAuthorization(options =>
@@ -86,6 +88,7 @@ namespace WebDemo2
 
 
             services.AddSingleton(Configuration);
+            services.AddSingleton<Service.CaptchaHelper>();
             services.AddSingleton<IAuthorizationHandler, MinimumAgeHandler>();
 
             services.Configure<ForwardedHeadersOptions>(options =>
