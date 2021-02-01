@@ -95,6 +95,9 @@ namespace WebDemo2
             {
                 options.KnownProxies.Add(IPAddress.Parse(Configuration["Proxy"]));
             });
+
+            // 后台定时服务
+            services.AddHostedService<Service.BackgroundService.TimedHostedService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
