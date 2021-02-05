@@ -107,7 +107,9 @@ namespace WebDemo2.Controllers
         {
             if (!string.IsNullOrEmpty(logInfo.UserName) && !string.IsNullOrEmpty(logInfo.Password))
             {                
-                var tokenString = AuthenticationHelper.GenerateToken(logInfo.UserName);
+                var tokenString = AuthenticationHelper.GenerateToken(logInfo);
+
+                this._Cache.Set(logInfo.UserName, logInfo); // 将用户登录信息加入缓存。用于后续的权限管理等
 
                 return new JsonResult(new ResponseModel
                 {

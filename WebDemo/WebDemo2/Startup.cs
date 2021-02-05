@@ -90,7 +90,8 @@ namespace WebDemo2
 
             services.AddSingleton(Configuration);
             services.AddSingleton<Service.CaptchaHelper>();
-            services.AddSingleton<IAuthorizationHandler, MinimumAgeHandler>();
+            //services.AddTransient<IAuthorizationHandler, MinimumAgeHandler>();
+            services.AddTransient<IAuthorizationHandler, PermissionHandler>();
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
