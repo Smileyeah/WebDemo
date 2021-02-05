@@ -20,6 +20,7 @@ using System.Text;
 using WebDemo2.Policy;
 using Microsoft.AspNetCore.Authorization;
 using WebDemo2.Middleware;
+using WebDemo2.Extensions;
 
 namespace WebDemo2
 {
@@ -98,6 +99,9 @@ namespace WebDemo2
 
             // 后台定时服务
             services.AddHostedService<Service.BackgroundService.TimedHostedService>();
+
+            // RabbitMQ消息服务
+            services.AddRabbit(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
