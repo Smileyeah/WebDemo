@@ -9,7 +9,7 @@ using WebDemo2.Models;
 
 namespace WebDemo2.Controllers
 {
-    [Authorize(Policy = "AtLeast21")]
+    [Authorize("Permission")]
     [ApiController]
     [Route("api/[controller]")]
     public class WeatherForecastController : ControllerBase

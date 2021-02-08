@@ -29,6 +29,12 @@ namespace WebDemo2.Controllers
             this._CaptchaHelper = captchaHelper;
         }
 
+        [HttpGet("NoPermission")]
+        public static JsonResult NoPermission()
+        {
+            return new JsonResult(new ResponseModel { Code = 403, Message = "用户权限不足，无权限访问！", Data = "false" });
+        }
+
         /// <summary>
         /// 获取验证码
         /// </summary>
@@ -41,7 +47,6 @@ namespace WebDemo2.Controllers
             this._Cache.Set("code_errornum", string.Empty);
             return new JsonResult(ResponseModel.GetResultSuccess(result));
         }
-
 
         /// <summary>
         /// 检查滑动验证码
@@ -106,7 +111,10 @@ namespace WebDemo2.Controllers
         public IActionResult Login([FromBody] UserLogInfo logInfo)
         {
             if (!string.IsNullOrEmpty(logInfo.UserName) && !string.IsNullOrEmpty(logInfo.Password))
-            {                
+            {
+                logInfo.RoleName = string.IsNullOrEmpty(logInfo.RoleName) ? "ADMIN" : logInfo.RoleName;
+                logInfo.IsAdmin = true;
+
                 var tokenString = AuthenticationHelper.GenerateToken(logInfo);
 
                 this._Cache.Set(logInfo.UserName, logInfo); // 将用户登录信息加入缓存。用于后续的权限管理等

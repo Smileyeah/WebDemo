@@ -20,13 +20,14 @@ namespace WebDemo2.Service
         {
             IConfiguration configuration = Startup.GetConfiguration();
 
+            var guid = PermissionCache.UserLogin(userLogInfo.UserName);
             var claims = new[]
                    {
                     new Claim(JwtRegisteredClaimNames.Nbf,$"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}") ,
                     new Claim(JwtRegisteredClaimNames.Exp,$"{new DateTimeOffset(DateTime.Now.AddMinutes(30)).ToUnixTimeSeconds()}"),
                     new Claim(ClaimTypes.Name, userLogInfo.UserName),
                     new Claim(ClaimTypes.Role, userLogInfo.RoleName),
-                    new Claim(ClaimTypes.Sid, userLogInfo.Gid = PermissionCache.UserLogin(userLogInfo.UserName)),
+                    new Claim(ClaimTypes.Sid, guid),
                     new Claim(ClaimTypes.DateOfBirth, $"{DateTime.Now.AddYears(-22)}")
                 };
 
@@ -42,6 +43,8 @@ namespace WebDemo2.Service
             try
             {
                 string tokenstr = new JwtSecurityTokenHandler().WriteToken(token);
+
+                userLogInfo.Gid = guid;
                 return tokenstr;
             }
             catch (Exception ex)

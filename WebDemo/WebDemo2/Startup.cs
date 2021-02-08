@@ -21,6 +21,7 @@ using WebDemo2.Policy;
 using Microsoft.AspNetCore.Authorization;
 using WebDemo2.Middleware;
 using WebDemo2.Extensions;
+using System.Security.Claims;
 
 namespace WebDemo2
 {
@@ -36,19 +37,33 @@ namespace WebDemo2
         /// <summary>
         /// 用于手工获取注入
         /// </summary>
-        private static IServiceProvider serviceProvider;
+        public static IServiceProvider ServiceProvider { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMemoryCache();
-
             services.AddControllers();
+            services.AddHttpContextAccessor();
 
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("AtLeast21", policy =>
+            //        policy.Requirements.Add(new MinimumAgeRequirement(21)));
+            //});
+
+            //【授权】
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("AtLeast21", policy =>
-                    policy.Requirements.Add(new MinimumAgeRequirement(21)));
+                //权限要求参数
+                var permissionRequirement = new PermissionRequirement(
+                    ClaimTypes.Name,// 基于用户名的授权
+                    expiration: TimeSpan.FromMinutes(120),// 接口的过期时间
+                    "/api/nopermission"// 拒绝授权的跳转地址
+                );
+
+                // 添加策略鉴权模式
+                options.AddPolicy("Permission", policy => policy.Requirements.Add(permissionRequirement));
             });
 
             //添加jwt验证：
@@ -99,7 +114,7 @@ namespace WebDemo2
             });
 
             // 后台定时服务
-            services.AddHostedService<Service.BackgroundService.TimedHostedService>();
+            //services.AddHostedService<Service.BackgroundService.TimedHostedService>();
 
             // RabbitMQ消息服务
             services.AddRabbit(Configuration);
@@ -108,7 +123,7 @@ namespace WebDemo2
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            serviceProvider = app.ApplicationServices;
+            ServiceProvider = app.ApplicationServices;
 
             if (env.IsDevelopment())
             {
@@ -140,7 +155,7 @@ namespace WebDemo2
 
         public static IConfiguration GetConfiguration()
         {
-            return serviceProvider.GetService<IConfiguration>();
+            return ServiceProvider.GetService<IConfiguration>();
         }
     }
 }

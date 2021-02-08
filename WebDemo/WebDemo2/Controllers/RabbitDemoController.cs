@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,20 +8,20 @@ using WebDemo2.Interface;
 
 namespace WebDemo2.Controllers
 {
+    [Authorize("Permission")]
     [ApiController]
     [Route("api/[controller]")]
     public class RabbitDemoController : ControllerBase
     {
-        private IRabbitManager _manager;
-
+        private readonly IRabbitManager _manager;
         public RabbitDemoController(IRabbitManager manager)
         {
             _manager = manager;
         }
 
         // GET api/values  
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        [HttpGet("PublishDemoMsg")]
+        public ActionResult<IEnumerable<string>> PublishDemoMsg()
         {
             // other opreation  
 
