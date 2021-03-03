@@ -148,6 +148,14 @@ namespace WebDemo2.Policy
 
         #region CheckUserHaveLogIn
 
+        /// <summary>
+        /// 检查改用户是否已登陆
+        /// </summary>
+        /// <param name="cache"></param>
+        /// <param name="userName"></param>
+        /// <param name="token"></param>
+        /// <param name="guid">登录时，PermissionCache会生成一个唯一标识符。现用guid做唯一标识，实际项目中会用token</param>
+        /// <returns></returns>
         private bool CheckUserIsExistByMemory(IMemoryCache cache, string userName, string token, string guid)
         {
             bool flag = false;
@@ -183,10 +191,11 @@ namespace WebDemo2.Policy
 
             var isManyLoginEnabled =
                 Convert.ToBoolean(Startup.GetConfiguration().GetSection("AllowedMultiLogin").Value);
+
+            var jwtToken = AuthenticationHelper.GetJwtTokenFromToken(token);
             if (!isManyLoginEnabled)
             {
                 // 不支持用户同时登录
-                var jwtToken = AuthenticationHelper.GetJwtTokenFromToken(token);
                 if (memoryGid == guid && jwtToken != default)
                 {
                     DateTime nowTime = DateTime.UtcNow;
@@ -198,13 +207,27 @@ namespace WebDemo2.Policy
                     }
                 }
             }
+            else
+            {
+                if (jwtToken != default)
+                {
+                    DateTime nowTime = DateTime.UtcNow;
+                    DateTime errorLastTime = jwtToken.ValidTo;
+                    TimeSpan ts = nowTime - errorLastTime;
+                    if (ts.TotalMinutes <= 120)
+                    {
+                        return true;
+                    }
+                }
+            }
 
             return false;
         }
+
         #endregion
 
         /// <summary>
-        /// 用于固化已知的
+        /// 用于固化已知的模块
         /// </summary>
         private static readonly ConcurrentDictionary<string, string> PageModules = new ConcurrentDictionary<string, string>()
         {

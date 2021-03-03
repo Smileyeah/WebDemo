@@ -29,26 +29,23 @@ namespace WebDemo2.Middleware
 
         public async Task Invoke(HttpContext context)
         {
-            if (context.Request.Method != HttpMethod.Get.Method)
+            var remoteIp = context.Connection.RemoteIpAddress;
+
+            var bytes = remoteIp.GetAddressBytes();
+            var isBadIp = true;
+            foreach (var address in _safelist)
             {
-                var remoteIp = context.Connection.RemoteIpAddress;
-
-                var bytes = remoteIp.GetAddressBytes();
-                var badIp = true;
-                foreach (var address in _safelist)
+                if (address.SequenceEqual(bytes))
                 {
-                    if (address.SequenceEqual(bytes))
-                    {
-                        badIp = false;
-                        break;
-                    }
+                    isBadIp = false;
+                    break;
                 }
+            }
 
-                if (badIp)
-                {
-                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                    return;
-                }
+            if (isBadIp)
+            {
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                return;
             }
 
             await _next.Invoke(context);

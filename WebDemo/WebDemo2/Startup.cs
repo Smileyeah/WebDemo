@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Authorization;
 using WebDemo2.Middleware;
 using WebDemo2.Extensions;
 using System.Security.Claims;
+using WebDemo2.Filter;
 
 namespace WebDemo2
 {
@@ -42,6 +43,13 @@ namespace WebDemo2
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var mvcBuilders = services.AddMvc(options =>
+            {
+                options.EnableEndpointRouting = false;
+                options.Filters.Add(typeof(WebGlobalExecptionFilter));
+                options.Filters.Add(typeof(CustomFilterAttribute));
+            });
+
             services.AddMemoryCache();
             services.AddControllers();
             services.AddHttpContextAccessor();
