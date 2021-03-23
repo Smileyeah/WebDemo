@@ -72,6 +72,9 @@ namespace WebDemo2
 
                 // 添加策略鉴权模式
                 options.AddPolicy("Permission", policy => policy.Requirements.Add(permissionRequirement));
+
+                options.AddPolicy(JwtBearerDefaults.AuthenticationScheme,
+                    new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
             });
 
             //添加jwt验证：
