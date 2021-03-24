@@ -23,6 +23,10 @@ using WebDemo2.Middleware;
 using WebDemo2.Extensions;
 using System.Security.Claims;
 using WebDemo2.Filter;
+using Microsoft.AspNetCore.Identity;
+using WebDemo.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace WebDemo2
 {
@@ -43,6 +47,16 @@ namespace WebDemo2
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Add EF services to the services container.
+            services.AddDbContextPool<ApplicationDbContext>(d => d.UseSqlite($"Filename=./Database.db"), 512);
+
+            IdentityBuilder builder = services.AddIdentityCore<IdentityUser>(options => { });
+            builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
+            builder.AddRoleManager<RoleManager<IdentityRole>>();
+            builder.AddSignInManager<SignInManager<IdentityUser>>();
+            builder.AddEntityFrameworkStores<ApplicationDbContext>();
+            builder.AddDefaultTokenProviders();
+
             var mvcBuilders = services.AddMvc(options =>
             {
                 options.EnableEndpointRouting = false;

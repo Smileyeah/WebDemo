@@ -34,8 +34,8 @@ namespace WebDemo2.Service
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtBearer:SecurityKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(
-                issuer: configuration["JwtBearer:Audience"],
-                audience: configuration["JwtBearer:Issuer"],
+                issuer: configuration["JwtBearer:Issuer"],
+                audience: configuration["JwtBearer:Audience"],
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: creds);

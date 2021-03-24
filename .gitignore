@@ -348,3 +348,6 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/WebDemo/WebDemo2/Migrations/ApplicationDbContextModelSnapshot.cs
+/WebDemo/WebDemo2/Migrations/20210323111514_CreatingIdentityTables.Designer.cs
+/WebDemo/WebDemo2/Migrations/20210323111514_CreatingIdentityTables.cs
