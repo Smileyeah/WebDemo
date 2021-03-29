@@ -27,6 +27,7 @@ namespace WebDemo2.Controllers
         }
 
         [HttpGet("Get")]
+        [Filter.HeaderCheckFilter]
         public IEnumerable<WeatherForecast> Get()
         {
             _logger.LogInformation("Enter");

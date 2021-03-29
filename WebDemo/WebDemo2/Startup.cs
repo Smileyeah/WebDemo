@@ -62,6 +62,7 @@ namespace WebDemo2
                 options.EnableEndpointRouting = false;
                 options.Filters.Add(typeof(WebGlobalExecptionFilter));
                 options.Filters.Add(typeof(CustomFilterAttribute));
+                options.Filters.Add(typeof(HeaderCheckFilter));
             });
 
             services.AddMemoryCache();
