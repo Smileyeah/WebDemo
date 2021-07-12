@@ -23,6 +23,7 @@ namespace WebDemo2.Filter
 
             if (hasAllowAnonymous) return;
 
+            base.OnActionExecuting(context);
 
             var token = TokenRetrieval.FromAuthorizationHeader()(context?.HttpContext.Request);
             if (string.IsNullOrWhiteSpace(token) || token == "null")
